@@ -10,7 +10,7 @@ module config_regs (
 
     // CPU write interface
     input logic cpu_we, // Write enable signal
-    input logic [2:0] cpu_addr, // Register adress (maps to channel 0-7)
+    input logic [2:0] cpu_addr, // Register adress (maps to channel 0-7) (address decoder)
     input logic [3:0] cpu_wdata, // Data to write: bit[3] is mask, bits [2:0] are priority
 
     // Outputs
