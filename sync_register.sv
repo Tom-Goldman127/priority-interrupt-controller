@@ -1,6 +1,6 @@
 module sync_register (
-    input logic clk , // System clock
-    input logic rst_n , // Active low reset
+    input logic clk, // System clock
+    input logic rst_n, // Active low reset
     input logic [7:0] ext_intr, // External interrupt signals (8 channels)
     output logic [7:0] sync_intr // Synchronized interrupt signals
 );
@@ -29,6 +29,7 @@ assign sync_intr = sync_ff2;
 
 endmodule
 
+// 8(bits)*2=16 DFF used, Each goes through 2 stages of synchronization to ensure metastability is mitigated.
 
     
 
