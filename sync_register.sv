@@ -1,3 +1,11 @@
+// =============================================================================
+// Module Name:    sync_registers
+// Description:    Two-Stage Synchronizer for External Interrupts.
+//                 Filters and synchronizes asynchronous input signals from the 
+//                 external peripherals to the internal system clock domain, 
+//                 effectively preventing metastability risks (CDC handling).
+// =============================================================================
+
 module sync_register (
     input logic clk, // System clock
     input logic rst_n, // Active low reset
@@ -29,7 +37,7 @@ assign sync_intr = sync_ff2;
 
 endmodule
 
-// 8(bits)*2=16 DFF used, Each goes through 2 stages of synchronization to ensure metastability is mitigated.
+// 8(bits)*2=16 DFF used
 
     
 
