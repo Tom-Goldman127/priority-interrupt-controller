@@ -78,10 +78,11 @@ module pic_top_tb;
 
     // handshake logic from the CPU
     ext_intr[0] = 1'b0; // release the interrupt
+    #40;
     irq_ack = 1'b1; // aclnowledge the interrupt
     #10;
     irq_ack = 1'b0; // clear acknowledge
-    #10;
+    #20;
   
     if (irq === 1'b0) begin
         $display("Test 1.2 Passed: Interrupt acknowledged and cleared");
@@ -330,7 +331,7 @@ module pic_top_tb;
     #20;
 
     $display("All Tests Completed!");
-    $finish; 
+    $stop; 
 end
 
 endmodule
