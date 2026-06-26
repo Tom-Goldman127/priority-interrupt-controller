@@ -1,0 +1,25 @@
+# Quartus generated directories
+db/
+incremental_db/
+output_files/
+
+# Quartus generated files
+*.rpt
+*.smsg
+*.summary
+*.done
+*.jdi
+*.pin
+*.qws
+*.qpf
+*.qsf
+c5_pin_model_dump.txt
+
+# ModelSim / Simulation generated files
+simulation/
+modelsim.ini
+*transcript*
+*.wlf
+*.do.bak*
+*.sft
+*.svo
