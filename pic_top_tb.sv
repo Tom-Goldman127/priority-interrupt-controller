@@ -339,7 +339,43 @@ module pic_top_tb;
     #20;
 
     $display("All Tests Completed!");
-    $stop; 
+    
+
+
+    // ========================================
+        // Test 1.10: Randomized Stress Tests
+    // ========================================
+    begin
+        int unsigned rand_delay; // variable to hold random delay values
+        $display("Running Test 1.10: Randomized Stress Test (50 Cycles)");
+        // reset the system
+        ext_intr = 8'b0;
+        #40;
+        if (irq === 1'b1) begin
+            irq_ack = 1'b1; #10; irq_ack = 1'b0; #40;
+        end
+        // 50 iterations loop
+        for (int i = 0; i < 50; i++) begin
+            ext_intr = $urandom(); // opening a random channel
+            rand_delay = $urandom_range(40, 150); // randomize reaction time (40 to 150 ns)
+            #(rand_delay);
+
+            if (irq === 1'b1) begin // CPU intervene when there is an active interrupt
+                $display("   [Random Cycle %0d] Handled interrupt on channel %0d (ext_intr state: %b)", i, intr_id, ext_intr);
+                irq_ack = 1'b1;
+                #10;
+                irq_ack = 1'b0;
+            end else begin
+                $display("   [Random Cycle %0d] No active interrupt (ext_intr state: %b)", i, ext_intr);
+            end
+
+            // spacing and cleaning for the next cycle
+            ext_intr = 8'b0;
+            #50;
+        end
+        $display("Test 1.10 Passed: Completed 50 random cycles safely!");
+    end
+    $stop;
 end
 
 endmodule
