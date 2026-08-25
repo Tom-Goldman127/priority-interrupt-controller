@@ -6,7 +6,7 @@
 ## Original Design & Architecture
 The system was initially designed using a modular approach, consisting of three main RTL blocks and a top-level handshake controller.
 
-![Original PIC Block Diagram](pic_block_diagram.png)
+![Original PIC Block Diagram](Images/pic_block_diagram.png)
 
 ### Core Modules:
 1. **sync_register (2-Stage Synchronizer):** 
@@ -19,9 +19,9 @@ The system was initially designed using a modular approach, consisting of three 
 ##  Verification & The Combinational Flaw
 A testbench was built to verify the system against edge cases. However, during the verification process, two critical test cases failed, revealing a severe architectural flaw in the initial design.
 
-![Failed Tests Summary](failedtests.png)
-![1.6failed](failed1.6.png)
-![1.9failed](failed1.9.png)
+![Failed Tests Summary](Images/failedtests.png)
+![1.6failed](Images/failed1.6.png)
+![1.9failed](Images/failed1.9.png)
 
 ### The Failed Scenarios:
 * **Test 1.6 (Short Pulse):** Failed. An external interrupt spiked and dropped before the CPU could acknowledge it. The system failed to latch the ID, causing a "ghost" interrupt.
@@ -32,7 +32,7 @@ A testbench was built to verify the system against edge cases. However, during t
 ##  Updated Design 
 To fix this, the architecture was upgraded from a purely combinational output to a Synchronous Registered Output with a hardware lock mechanism.
 
-![Updated PIC Block Diagram](updated_diagram.png)
+![Updated PIC Block Diagram](Images/updated_diagram.png)
 
 ### The Fix:
 * **Breaking the Combinational Path:** The output of the encoder is now an internal signal: `next_id`.
@@ -44,7 +44,7 @@ To fix this, the architecture was upgraded from a purely combinational output to
 ##  Final Simulation & Results
 After updating the RTL and modifying the testbench timings to account for the physical delays of the synchronizer and the new output register, the system worked as expected.
 
-![Passed Tests](completedtests.png)
+![Passed Tests](Images/completedtests.png)
 
 ## Random Verification (Stress Testing)
 I wanted to go beyond just writing manual tests for the edge cases I could think of. I learned that in the industry, verification relies heavily on randomization to catch hidden bugs. So, I decided to add a Randomized Stress Test (Test 1.10) to see how my design handles unexpected situations.
@@ -55,6 +55,6 @@ Using SystemVerilog's built in functions ($urandom and $urandom_range), I create
 
 **The Result:** I was really happy to see that the updated controller survived all 50 random cycles without crashing or losing data. The hardware lock that I added earlier did its job perfectly, protecting the system from glitches and overwrites even when the inputs were completly random. 
 
-![Random Tests](randomtest.png)
+![Random Tests](Images/randomtest.png)
 
 All test cases, including simultaneous collisions, glitches, and on the fly reconfigurations, now pass successfully. The controller safely queues and holds interrupts without data loss.
