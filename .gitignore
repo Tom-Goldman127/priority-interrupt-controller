@@ -23,3 +23,5 @@ modelsim.ini
 *.do.bak*
 *.sft
 *.svo
+
+*.~xlsx
