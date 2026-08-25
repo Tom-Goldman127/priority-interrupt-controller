@@ -135,6 +135,7 @@ module pic_top_tb;
         $display("Test 1.4 Failed: Failed to choose higher priority");
     end
     ext_intr[3] = 1'b0; // the CPU is going to handle the interrupt on chanel 3
+    #40;
     irq_ack = 1'b1; // aclnowledge the interrupt
     #10;
     irq_ack = 1'b0; // clear acknowledge
@@ -148,6 +149,7 @@ module pic_top_tb;
     end
     #20;
     ext_intr[2] = 1'b0; // the CPU is going to handle the interrupt on chanel 2
+    #40;
     irq_ack = 1'b1; // aclnowledge the interrupt
     #10;
     irq_ack = 1'b0; // clear acknowledge
@@ -180,6 +182,7 @@ module pic_top_tb;
     end
     #20;
     ext_intr[4] = 1'b0; // taking down channel 4 
+    #40;
     irq_ack = 1'b1; // aclnowledge the interrupt (4)
     #10;
     irq_ack = 1'b0; // clear acknowledge
@@ -193,6 +196,7 @@ module pic_top_tb;
     end
     
     ext_intr[5] = 1'b0; // taking down channel 5
+    #40;
     irq_ack = 1'b1;     // acknowledge the interrupt (5)
     #10;
     irq_ack = 1'b0;     // clear acknowledge
@@ -210,10 +214,11 @@ module pic_top_tb;
     #10;
     ext_intr[1] = 1'b1; // interrupt channel 1
     #40;
+    #10; // we now have a register so we need to wait for the next clock cycle to get the right id (after the change)
     ext_intr[1] = 1'b0; // taking down the interrupt before we get the ack from the CPU
     #20;
     if (irq === 1'b1 && intr_id === 3'b001) begin
-        $display("Test 1.6 : Successfully saved the right intr_id");
+        $display("Test 1.6 Passed: Successfully saved the right intr_id");
     end else begin
         $display("Test 1.6 Failed: Failed to save the right intr_id");
     end
@@ -243,6 +248,7 @@ module pic_top_tb;
     // simultaneous action (all will happen in the same cycle)
     ext_intr[6] = 1'b0; // taking down channel 6 interrupt
     ext_intr[7] = 1'b1; // interrupting channel 7
+    #40; 
     irq_ack = 1'b1; // ack from CPU
     #10;
     irq_ack = 1'b0;
@@ -253,6 +259,7 @@ module pic_top_tb;
         $display("Test 1.7 Failed: Failed to notice channel 7");
     end
     ext_intr[7] = 1'b0; // taking down channel 7 interrupt
+    #40;
     irq_ack = 1'b1;
     #10;
     irq_ack = 1'b0;
@@ -285,13 +292,14 @@ module pic_top_tb;
     #10;
     cpu_we = 1'b0;
     #40;
-    if (irq === 1'b1 && intr_id === 3'b010) begin
-        $display("Test 1.8 Passed : Successfully reconfigurated");
+    if (irq === 1'b1 && intr_id === 3'b011) begin
+        $display("Test 1.8 Passed : Successfully rejected configuration change while locked");
     end else begin
-        $display("Test 1.8 Failed: Failed to reconfigurate");
+        $display("Test 1.8 Failed: Hardware failed to lock the ID during reconfiguration");
     end
     ext_intr[2] = 1'b0; 
     ext_intr[3] = 1'b0; 
+    #40;
     irq_ack = 1'b1;
     #10;
     irq_ack = 1'b0;
