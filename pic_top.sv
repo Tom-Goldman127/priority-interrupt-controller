@@ -15,6 +15,7 @@ logic [7:0] sync_intr; // Synchronized interrupt signals from the sync_register 
 logic [2:0] reg_priority [8]; // Priority levels from the config_regs module
 logic [7:0] reg_mask; // Mask bits from the config_regs module
 logic valid_irq; // Indicates if there is a valid interrupt request 
+logic [2:0] next_id; // signal to hold the right id that would be sent to the CPU (Register)
 
 // Instansiation
 sync_register my_sync_register (
@@ -40,17 +41,19 @@ priority_encoder my_priority_encoder (
     .reg_priority(reg_priority),
     .sync_intr(sync_intr),
     .valid_irq(valid_irq),
-    .winning_id(intr_id)   // Output the winning interrupt ID to the CPU
+    .winning_id(next_id)   // Output the winning interrupt ID to the CPU
 );
 
 // Sequential logic for generating the interrupt request signal (flag)
 always_ff @(posedge clk or negedge rst_n) begin 
     if (!rst_n) begin // Reset clears the flag
         irq <= 1'b0;
+        intr_id <= 3'b000;
     end else if (irq_ack) begin // When the cpu acknowledged a signal we clear the flag
         irq <= 1'b0;
-    end else if (valid_irq) begin // If there is a valid interrupt request, we set the flag
+    end else if (valid_irq == 1 && irq == 0) begin // If there is a valid interrupt request and there is none already waiting, we set the flag
         irq <= 1'b1;
+        intr_id <= next_id;
     end   
 end
 
